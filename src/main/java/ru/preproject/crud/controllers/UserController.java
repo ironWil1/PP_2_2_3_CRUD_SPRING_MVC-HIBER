@@ -15,7 +15,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private long calcId = 0;
 
     @Autowired
     public UserController(UserService userService) {
@@ -51,18 +50,9 @@ public class UserController {
 
     @RequestMapping("/edit")
     public ModelAndView editCustomerForm(@RequestParam long id) {
-        calcId = id;
         ModelAndView mav = new ModelAndView("edit_form");
         User user = userService.getUser(id);
         mav.addObject("user", user);
         return mav;
     }
-
-    @RequestMapping("/save_edited")
-    public String saveEditedUser(@ModelAttribute("user") User user) {
-        userService.updateUser(user, calcId);
-        return "redirect:/";
-    }
-
-
 }

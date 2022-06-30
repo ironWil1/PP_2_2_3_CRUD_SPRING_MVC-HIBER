@@ -11,9 +11,9 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
-public class UserDaoImpl implements UserDao{
+public class UserDaoImpl implements UserDao {
     @PersistenceContext
-    EntityManager em;
+    private EntityManager em;
 
     @Transactional
     @Override
@@ -27,28 +27,25 @@ public class UserDaoImpl implements UserDao{
         em.remove(getUser(id));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public User getUser(long id) {
         TypedQuery<User> query = em.createQuery(
                 "SELECT u FROM User u WHERE u.id = ?1", User.class);
         return query.setParameter(1, id).getSingleResult();
     }
+
     @Transactional
     @Override
-    public void updateUser(User user, long id) {
-        User updatedUser = new User();
-        em.detach(getUser(id));
-        updatedUser.setId(id);
-        updatedUser.setName(user.getName());
-        updatedUser.setSurName(user.getSurName());
-        updatedUser.setAccountBalance(user.getAccountBalance());
-        em.merge(updatedUser);
+    public void updateUser(User user) {
+        em.merge(user);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<User> showAllUsers() {
         TypedQuery<User> query = em.createQuery(
                 "SELECT u FROM User u", User.class);
-        return  query.getResultList();
+        return query.getResultList();
     }
 }
